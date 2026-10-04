@@ -1,0 +1,12 @@
+chromadb
+fastapi
+groq
+pytest
+pymupdf
+pdfplumber
+pyvis
+pytesseract
+sentence-transformers
+streamlit
+streamlit-authenticator
+uvicorn

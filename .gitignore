@@ -1,0 +1,58 @@
+# ==============================
+# Python
+# ==============================
+__pycache__/
+*.py[cod]
+*.pyo
+
+# ==============================
+# Virtual Environment
+# ==============================
+venv/
+.venv/
+
+# ==============================
+# Environment / Secrets
+# ==============================
+.env
+.env.*
+!.env.example
+
+.streamlit/secrets.toml
+
+# ==============================
+# SQLite / Databases
+# ==============================
+*.sqlite3
+*.db
+
+# ==============================
+# Generated Data
+# ==============================
+data/chroma/
+data/documents/
+data/processed/
+
+# ==============================
+# Logs / Temporary Files
+# ==============================
+*.log
+*.tmp
+*.temp
+
+compilecheck.txt
+compileall.txt
+pytest.txt
+pipcheck.txt
+
+# ==============================
+# Pytest / Test Cache
+# ==============================
+.pytest_cache/
+
+# ==============================
+# Editor / OS Files
+# ==============================
+.vscode/
+.DS_Store
+Thumbs.db

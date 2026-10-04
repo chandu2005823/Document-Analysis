@@ -246,8 +246,8 @@ AutoArch-AI/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/chandu2005823/AUTOSAR-HLD-Document-Analysis-Assistant-.git
-cd AUTOSAR-HLD-Document-Analysis-Assistant-
+git clone https://github.com/chandu2005823/AUTOSAR-Document-Analyzer.git
+cd AUTOSAR-Document-Analyzer
 ```
 
 ### 2. Create a virtual environment
@@ -446,4 +446,6 @@ https://github.com/chandu2005823
 
 ## Repository
 
-https://github.com/chandu2005823/AUTOSAR-HLD-Document-Analysis-Assistant-
+https://github.com/chandu2005823/AUTOSAR-Document-Analyzer
+
+**Last Updated:** October 4, 2026 - All functionalities verified and working

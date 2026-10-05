@@ -1,18 +1,27 @@
 import json
+from pathlib import Path
 
 import chromadb
 
-from embeddings import EmbeddingModel
+from rag.embeddings import EmbeddingModel
 
 
-CHUNKS_FILE = "data/processed/autosar_chunks.json"
-CHROMA_DIR = "data/chroma"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+CHUNKS_FILE = PROJECT_ROOT / "data" / "processed" / "autosar_chunks.json"
+CHROMA_DIR = PROJECT_ROOT / "data" / "chroma"
 
 
 def load_chunks():
     """Load AUTOSAR chunks from JSON."""
 
-    with open(CHUNKS_FILE, "r", encoding="utf-8") as f:
+    if not CHUNKS_FILE.exists():
+        raise FileNotFoundError(
+            f"AUTOSAR chunks file was not found at {CHUNKS_FILE}. "
+            "Add a PDF under data/documents and run `python -m ingestion.save_chunks`, "
+            "or upload a PDF through the application."
+        )
+
+    with CHUNKS_FILE.open("r", encoding="utf-8") as f:
         data = json.load(f)
 
     return data["chunks"]
@@ -31,7 +40,7 @@ def create_vector_database():
 
     # Persistent ChromaDB
     client = chromadb.PersistentClient(
-        path=CHROMA_DIR
+        path=str(CHROMA_DIR)
     )
 
     # Separate collection for AUTOSAR

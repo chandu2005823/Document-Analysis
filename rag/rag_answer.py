@@ -1,6 +1,6 @@
-from rag_pipeline import retrieve_context
-from groq_client import generate_answer
-from citation import format_sources
+from rag.citation import format_sources
+from rag.groq_client import generate_answer
+from rag.rag_pipeline import retrieve_context
 from database.access_control import prompt_for_user_project
 
 

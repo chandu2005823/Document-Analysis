@@ -1,4 +1,4 @@
-from pathlib import Path
+import pymupdf
 
 from analysis.document_comparison import compare_entities
 from extraction.architecture_extractor import extract_architecture_entities
@@ -8,10 +8,6 @@ from ingestion.pdf_parser import extract_text_from_pdf
 from database.traceability_store import save_traceability, load_traceability
 from rag.confidence import calculate_confidence
 from rag.grounding_guard import check_grounding
-
-
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-AUTOSAR_PDF = PROJECT_ROOT / "data" / "documents" / "AUTOSAR_AP_EXP_SWArchitecture.pdf"
 
 
 def test_compare_entities_detects_adds_removes_and_page_changes():
@@ -36,11 +32,18 @@ def test_compare_entities_detects_adds_removes_and_page_changes():
     assert any(item["entity"] == "Service Instance" for item in result["unchanged"])
 
 
-def test_extract_text_from_pdf_returns_pages():
-    pages = extract_text_from_pdf(AUTOSAR_PDF)
+def test_extract_text_from_pdf_returns_pages(tmp_path):
+    pdf_path = tmp_path / "sample.pdf"
+    document = pymupdf.open()
+    page = document.new_page()
+    page.insert_text((72, 72), "Architecture PDF extraction fixture.")
+    document.save(pdf_path)
+    document.close()
 
-    assert len(pages) > 0
-    assert any(page["text"].strip() for page in pages)
+    pages = extract_text_from_pdf(pdf_path)
+
+    assert len(pages) == 1
+    assert "Architecture PDF extraction fixture." in pages[0]["text"]
 
 
 def test_chunker_creates_overlap_chunks():

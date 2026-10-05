@@ -20,7 +20,6 @@ def _ocr_page(page):
     import pytesseract
     from PIL import Image
 
-    # Example on Windows: set TESSERACT_CMD=C:\Program Files\Tesseract-OCR\tesseract.exe
     tesseract_cmd = os.environ.get("TESSERACT_CMD")
     if tesseract_cmd:
         pytesseract.pytesseract.tesseract_cmd = tesseract_cmd
@@ -78,7 +77,8 @@ def extract_text_from_pdf(pdf_path):
 
 if __name__ == "__main__":
 
-    pdf_file = "data/documents/AUTOSAR_AP_EXP_SWArchitecture.pdf"
+    project_root = Path(__file__).resolve().parent.parent
+    pdf_file = project_root / "data" / "documents" / "AUTOSAR_AP_EXP_SWArchitecture.pdf"
 
     pages = extract_text_from_pdf(pdf_file)
 

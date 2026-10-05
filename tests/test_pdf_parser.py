@@ -99,7 +99,7 @@ def test_page_records_preserve_existing_fields(fake_pdf):
     assert result[0]["extraction_method"] == "text"
 
 
-def test_ocr_adapter_uses_configured_tesseract_path(monkeypatch):
+def test_ocr_adapter_uses_configured_tesseract_path(monkeypatch, tmp_path):
     rendered_image = BytesIO()
     Image.new("RGB", (2, 2), color="white").save(rendered_image, format="PNG")
 
@@ -120,7 +120,8 @@ def test_ocr_adapter_uses_configured_tesseract_path(monkeypatch):
         observed["tesseract_cmd"] = pytesseract.pytesseract.tesseract_cmd
         return " OCR result "
 
-    monkeypatch.setenv("TESSERACT_CMD", r"C:\Tools\Tesseract-OCR\tesseract.exe")
+    tesseract_path = str(tmp_path / "tesseract.exe")
+    monkeypatch.setenv("TESSERACT_CMD", tesseract_path)
     monkeypatch.setattr(pytesseract, "image_to_string", fake_image_to_string)
 
     result = pdf_parser._ocr_page(FakePage())
@@ -129,5 +130,5 @@ def test_ocr_adapter_uses_configured_tesseract_path(monkeypatch):
     assert observed == {
         "dpi": 300,
         "image_size": (2, 2),
-        "tesseract_cmd": r"C:\Tools\Tesseract-OCR\tesseract.exe",
+        "tesseract_cmd": tesseract_path,
     }

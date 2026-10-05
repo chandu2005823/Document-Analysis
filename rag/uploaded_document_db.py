@@ -3,12 +3,13 @@ from pathlib import Path
 
 import chromadb
 
-from embeddings import EmbeddingModel
+from rag.embeddings import EmbeddingModel
 from database.access_control import AuthorizationError, project_collection_name
 from database.access_control import prompt_for_user_project
 
 
-CHROMA_DIR = "data/chroma"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+CHROMA_DIR = PROJECT_ROOT / "data" / "chroma"
 DEFAULT_COLLECTION = "uploaded_autosar_documents"
 
 
@@ -31,7 +32,7 @@ def build_uploaded_database(json_path, *, user_id=None, project_id=None, collect
         raise AuthorizationError("The processed document belongs to a different project.")
 
     chunks = data["chunks"]
-    client = chromadb.PersistentClient(path=CHROMA_DIR)
+    client = chromadb.PersistentClient(path=str(CHROMA_DIR))
 
     collection = client.get_or_create_collection(name=authorized_collection)
     if not chunks:
@@ -75,7 +76,7 @@ def build_uploaded_database(json_path, *, user_id=None, project_id=None, collect
 if __name__ == "__main__":
     user, project = prompt_for_user_project()
     build_uploaded_database(
-        "data/processed/uploaded_chunks.json",
+        PROJECT_ROOT / "data" / "processed" / "uploaded_chunks.json",
         user_id=user["id"],
         project_id=project["id"],
     )

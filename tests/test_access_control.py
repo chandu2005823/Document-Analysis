@@ -1,4 +1,5 @@
 import sqlite3
+from pathlib import Path
 
 import pytest
 
@@ -56,6 +57,29 @@ def test_authentication_succeeds_and_fails_without_returning_hash(access_db):
     assert "password_hash" not in user
     assert access_control.authenticate_user("project-admin", "wrong-password-123") is None
     assert access_control.authenticate_user("unknown-user", "wrong-password-123") is None
+
+
+def test_admin_password_reset_requires_an_active_admin_and_changes_credentials(
+    access_db,
+):
+    reset_user = access_control.reset_admin_password(
+        "PROJECT-ADMIN", "new-admin-password-for-test-1"
+    )
+
+    assert reset_user["username"] == "project-admin"
+    assert "password_hash" not in reset_user
+    assert access_control.authenticate_user(
+        "project-admin", "new-admin-password-for-test-1"
+    )["id"] == access_db["admin"]["user_id"]
+    assert access_control.authenticate_user(
+        "project-admin", "admin-password-for-tests-1"
+    ) is None
+    with pytest.raises(ValueError, match="active admin account"):
+        access_control.reset_admin_password(
+            "project-viewer", "another-new-password-123"
+        )
+    with pytest.raises(ValueError, match="12 characters"):
+        access_control.reset_admin_password("project-admin", "short")
 
 
 def test_roles_and_project_membership_are_enforced(access_db):
@@ -131,6 +155,73 @@ def test_documents_are_stored_and_listed_within_their_project(access_db):
             chunk_count=1,
             collection_name="uploaded_autosar_documents",
         )
+
+
+def test_document_artifact_paths_survive_workspace_moves(
+    access_db, monkeypatch, tmp_path
+):
+    project_root = tmp_path / "workspace"
+    monkeypatch.setattr(access_control, "PROJECT_ROOT", project_root)
+    project_id = access_db["project"]["id"]
+    admin_id = access_db["admin"]["user_id"]
+    document_id = "p1_architecture_v1"
+    current_artifact_dir = (
+        project_root
+        / "data"
+        / "processed"
+        / "projects"
+        / str(project_id)
+        / document_id
+    )
+    current_artifact_dir.mkdir(parents=True)
+    (current_artifact_dir / "chunks.json").write_text("{}", encoding="utf-8")
+
+    document = access_control.create_document_record(
+        admin_id,
+        project_id,
+        document_id=document_id,
+        filename="architecture.pdf",
+        version=1,
+        page_count=1,
+        chunk_count=1,
+        artifact_dir=tmp_path / "old-workspace" / "data" / "processed" / "old-doc",
+    )
+
+    assert document["artifact_dir"] == str(current_artifact_dir)
+    assert access_control.get_project_document(
+        admin_id, project_id, document_id
+    )["artifact_dir"] == str(current_artifact_dir)
+    assert access_control.list_project_documents(
+        admin_id, project_id
+    )[0]["artifact_dir"] == str(current_artifact_dir)
+
+    new_document_id = "p1_new_document_v1"
+    new_artifact_dir = (
+        project_root
+        / "data"
+        / "processed"
+        / "projects"
+        / str(project_id)
+        / new_document_id
+    )
+    new_artifact_dir.mkdir(parents=True)
+    access_control.create_document_record(
+        admin_id,
+        project_id,
+        document_id=new_document_id,
+        filename="new-document.pdf",
+        version=1,
+        page_count=1,
+        chunk_count=1,
+        artifact_dir=new_artifact_dir,
+    )
+    with sqlite3.connect(access_control.DATABASE_PATH) as connection:
+        stored_path = connection.execute(
+            "SELECT artifact_dir FROM documents WHERE document_id = ?",
+            (new_document_id,),
+        ).fetchone()[0]
+
+    assert not Path(stored_path).is_absolute()
 
 
 def test_review_writes_require_project_role_and_context(access_db, monkeypatch, tmp_path):

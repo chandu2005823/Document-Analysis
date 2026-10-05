@@ -1,4 +1,4 @@
-from architecture_extractor import extract_architecture_entities
+from extraction.architecture_extractor import extract_architecture_entities
 
 
 def extract_traceable_entities(pages):

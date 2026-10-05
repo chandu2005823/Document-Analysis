@@ -1,8 +1,9 @@
 import re
+from pathlib import Path
 
 import chromadb
 
-from embeddings import EmbeddingModel
+from rag.embeddings import EmbeddingModel
 from database.access_control import (
     AuthorizationError,
     list_project_documents,
@@ -11,7 +12,8 @@ from database.access_control import (
 from database.access_control import prompt_for_user_project
 
 
-CHROMA_DIR = "data/chroma"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+CHROMA_DIR = PROJECT_ROOT / "data" / "chroma"
 
 DEFAULT_COLLECTION = "autosar_documents"
 LEXICAL_STOP_WORDS = {
@@ -36,7 +38,7 @@ def search_documents(
     collection_name = project_collection_name(user_id, project_id)
 
     client = chromadb.PersistentClient(
-        path=CHROMA_DIR
+        path=str(CHROMA_DIR)
     )
 
     collection = client.get_collection(
@@ -140,7 +142,7 @@ def search_document_metadata(query, top_k=8, *, user_id=None, project_id=None):
         raise AuthorizationError("Retrieval requires both a user and an authorized project.")
 
     collection_name = project_collection_name(user_id, project_id)
-    client = chromadb.PersistentClient(path=CHROMA_DIR)
+    client = chromadb.PersistentClient(path=str(CHROMA_DIR))
     collection = client.get_collection(name=collection_name)
     documents = list_project_documents(user_id, project_id)
     latest_document_id = documents[0]["document_id"] if documents else None

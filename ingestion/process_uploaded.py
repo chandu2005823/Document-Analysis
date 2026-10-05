@@ -1,9 +1,12 @@
 from pathlib import Path
 import json
 
-from pdf_parser import extract_text_from_pdf
-from chunker import create_chunks
-from table_extractor import create_table_chunks, extract_tables_from_pdf
+from ingestion.chunker import create_chunks
+from ingestion.pdf_parser import extract_text_from_pdf
+from ingestion.table_extractor import create_table_chunks, extract_tables_from_pdf
+
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
 def process_uploaded_pdf(pdf_path, output_path):
@@ -81,9 +84,7 @@ if __name__ == "__main__":
         "\nEnter PDF path: "
     ).strip()
 
-    output_file = (
-        "data/processed/uploaded_chunks.json"
-    )
+    output_file = PROJECT_ROOT / "data" / "processed" / "uploaded_chunks.json"
 
     process_uploaded_pdf(
         pdf_file,

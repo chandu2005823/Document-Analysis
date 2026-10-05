@@ -1,9 +1,12 @@
 import json
 from pathlib import Path
 
-from pdf_parser import extract_text_from_pdf
-from chunker import create_chunks
-from table_extractor import create_table_chunks, extract_tables_from_pdf
+from ingestion.chunker import create_chunks
+from ingestion.pdf_parser import extract_text_from_pdf
+from ingestion.table_extractor import create_table_chunks, extract_tables_from_pdf
+
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
 def process_document(pdf_file, output_file):
@@ -44,7 +47,7 @@ def process_document(pdf_file, output_file):
 
 if __name__ == "__main__":
 
-   pdf_file = "data/documents/AUTOSAR_AP_EXP_SWArchitecture.pdf"
-   output_file = "data/processed/autosar_chunks.json"
+   pdf_file = PROJECT_ROOT / "data" / "documents" / "AUTOSAR_AP_EXP_SWArchitecture.pdf"
+   output_file = PROJECT_ROOT / "data" / "processed" / "autosar_chunks.json"
 
    process_document(pdf_file, output_file)

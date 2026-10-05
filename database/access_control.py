@@ -17,6 +17,8 @@ DATABASE_PATH = Path(os.environ.get(
     "AUTOARCH_DB_PATH",
     PROJECT_ROOT / "data" / "processed" / "access_control.sqlite3",
 ))
+if not DATABASE_PATH.is_absolute():
+    DATABASE_PATH = PROJECT_ROOT / DATABASE_PATH
 PASSWORD_ITERATIONS = 600_000
 VALID_ROLES = {"admin", "architect", "viewer"}
 ROLE_LEVEL = {"viewer": 1, "architect": 2, "admin": 3}
@@ -189,6 +191,28 @@ def bootstrap_admin(username, password, project_name="AUTOSAR Demo"):
             (project_id, user_id),
         )
     return {"user_id": user_id, "project_id": project_id}
+
+
+def reset_admin_password(username, password):
+    if not isinstance(password, str) or len(password) < 12:
+        raise ValueError("Passwords must contain at least 12 characters.")
+
+    init_db()
+    with _connect() as connection:
+        row = connection.execute(
+            "SELECT * FROM users WHERE username = ? COLLATE NOCASE",
+            (str(username or "").strip(),),
+        ).fetchone()
+        if row is None or not row["active"] or row["role"] != "admin":
+            raise ValueError("An active admin account with that username was not found.")
+        connection.execute(
+            "UPDATE users SET password_hash = ? WHERE id = ?",
+            (hash_password(password), row["id"]),
+        )
+        updated_row = connection.execute(
+            "SELECT * FROM users WHERE id = ?", (row["id"],)
+        ).fetchone()
+    return _public_user(updated_row)
 
 
 def create_user(actor_user_id, username, password, role="viewer"):
@@ -403,6 +427,37 @@ def project_collection_name(user_id, project_id):
     return f"autosar_project_{project['id']}"
 
 
+def _document_artifact_dir(value, project_id, document_id):
+    if not value:
+        return None
+
+    artifact_dir = Path(value)
+    if not artifact_dir.is_absolute():
+        artifact_dir = PROJECT_ROOT / artifact_dir
+    if not artifact_dir.exists():
+        current_artifact_dir = (
+            PROJECT_ROOT
+            / "data"
+            / "processed"
+            / "projects"
+            / str(project_id)
+            / document_id
+        )
+        if current_artifact_dir.exists():
+            artifact_dir = current_artifact_dir
+    return str(artifact_dir)
+
+
+def _document_record(row):
+    record = dict(row)
+    record["artifact_dir"] = _document_artifact_dir(
+        record.get("artifact_dir"),
+        record["project_id"],
+        record["document_id"],
+    )
+    return record
+
+
 def create_document_record(
     user_id,
     project_id,
@@ -424,6 +479,15 @@ def create_document_record(
         raise AuthorizationError("Document collection does not match the authorized project.")
     collection_name = authorized_collection
     timestamp = _now()
+    stored_artifact_dir = None
+    if artifact_dir:
+        artifact_path = Path(artifact_dir)
+        try:
+            stored_artifact_dir = str(
+                artifact_path.resolve().relative_to(PROJECT_ROOT.resolve())
+            )
+        except ValueError:
+            stored_artifact_dir = str(artifact_path)
     with _connect() as connection:
         cursor = connection.execute(
             """INSERT INTO documents (
@@ -442,13 +506,13 @@ def create_document_record(
                 int(traceability_count),
                 collection_name,
                 user_id,
-                str(artifact_dir) if artifact_dir else None,
+                stored_artifact_dir,
             ),
         )
         row = connection.execute(
             "SELECT * FROM documents WHERE id = ?", (cursor.lastrowid,)
         ).fetchone()
-    return dict(row)
+    return _document_record(row)
 
 
 def list_project_documents(user_id, project_id):
@@ -458,7 +522,7 @@ def list_project_documents(user_id, project_id):
             "SELECT * FROM documents WHERE project_id = ? ORDER BY id DESC",
             (project["id"],),
         ).fetchall()
-    return [dict(row) for row in rows]
+    return [_document_record(row) for row in rows]
 
 
 def get_project_document(user_id, project_id, document_id):
@@ -470,7 +534,7 @@ def get_project_document(user_id, project_id, document_id):
         ).fetchone()
     if row is None:
         raise AuthorizationError("Document access denied.")
-    return dict(row)
+    return _document_record(row)
 
 
 def _setup_local_admin():
@@ -494,8 +558,24 @@ def _setup_local_admin():
         print("The account is ready, but the canonical project could not be seeded; upload a PDF from the app.")
 
 
+def _reset_local_admin_password():
+    username = input("Admin username: ").strip()
+    password = getpass.getpass("New admin password (12+ characters): ")
+    confirmation = getpass.getpass("Confirm new password: ")
+    if password != confirmation:
+        raise SystemExit("Passwords did not match.")
+    try:
+        reset_admin_password(username, password)
+    except ValueError as error:
+        raise SystemExit(str(error)) from error
+    print(f"Password reset for admin {username!r}. Sign in with the new password.")
+
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="AutoArch-AI local account setup")
-    parser.add_argument("command", choices=["setup-admin"])
-    parser.parse_args()
-    _setup_local_admin()
+    parser = argparse.ArgumentParser(description="AutoArch-AI local account management")
+    parser.add_argument("command", choices=["setup-admin", "reset-admin-password"])
+    arguments = parser.parse_args()
+    if arguments.command == "setup-admin":
+        _setup_local_admin()
+    else:
+        _reset_local_admin_password()

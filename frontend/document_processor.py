@@ -1,29 +1,25 @@
-from pathlib import Path
-import sys
-import tempfile
 import json
+import tempfile
 import uuid
+from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-sys.path.append(str(PROJECT_ROOT / "ingestion"))
-sys.path.append(str(PROJECT_ROOT / "rag"))
-sys.path.append(str(PROJECT_ROOT / "extraction"))
-sys.path.append(str(PROJECT_ROOT / "database"))
-
-from pdf_parser import extract_text_from_pdf
-from chunker import create_chunks
-from table_extractor import create_table_chunks, extract_tables_from_pdf
-from traceability import extract_traceable_entities
-from relationship_extractor import extract_relationships
-from uploaded_document_db import build_uploaded_database
-from versioning import get_document_version
 from database.access_control import (
     can_upload,
     create_document_record,
     project_collection_name,
     require_project_access,
 )
+from database.versioning import get_document_version
+from extraction.relationship_extractor import extract_relationships
+from extraction.traceability import extract_traceable_entities
+from frontend.relationship_graph import build_relationship_graph
+from ingestion.chunker import create_chunks
+from ingestion.pdf_parser import extract_text_from_pdf
+from ingestion.table_extractor import create_table_chunks, extract_tables_from_pdf
+from rag.rag_pipeline import load_relationships
+from rag.uploaded_document_db import build_uploaded_database
 
 EMPTY_UPLOAD_MESSAGE = "Uploaded file is empty (0 bytes). Please select a valid PDF."
 

@@ -4,8 +4,10 @@ from pathlib import Path
 import json
 import re
 from html import escape
+from dotenv import load_dotenv
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+load_dotenv(PROJECT_ROOT / ".env")
 
 for folder in [PROJECT_ROOT, PROJECT_ROOT / "rag", PROJECT_ROOT / "ingestion", PROJECT_ROOT / "extraction", PROJECT_ROOT / "analysis", PROJECT_ROOT / "database"]:
     if str(folder) not in sys.path:

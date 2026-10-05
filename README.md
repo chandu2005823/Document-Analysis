@@ -237,7 +237,7 @@ AutoArch-AI/
 - Git
 - Internet connection for installing Python packages
 - Tesseract OCR executable for OCR fallback workflows
-- Groq API key for LLM-based Q&A
+- Optional Groq API key for AI-generated Q&A responses
 
 ---
 
@@ -246,17 +246,17 @@ AutoArch-AI/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/chandu2005823/AUTOSAR-Document-Analyzer.git
-cd AUTOSAR-Document-Analyzer
+git clone https://github.com/chandu2005823/-Document-Analysis-Assistant-.git AutoArch-AI
+cd AutoArch-AI
 ```
 
 ### 2. Create a virtual environment
 
-Windows:
+From the repository root, on Windows:
 
 ```powershell
 python -m venv venv
-.\venv\Scripts\Activate.ps1
+.\venv\Scripts\activate
 ```
 
 Linux/macOS:
@@ -274,13 +274,32 @@ pip install -r requirements.txt
 
 ### 4. Configure environment variables
 
-Create a local `.env` file or set the environment variable directly.
+Create a local `.env` file from the committed template:
 
-```text
-GROQ_API_KEY=your_api_key_here
+```powershell
+copy .env.example .env
 ```
 
-Never commit the real API key to GitHub.
+Set `GROQ_API_KEY` in `.env` to enable AI-generated Q&A responses. The app
+loads `.env` from the repository root; values in `.env.example` are
+placeholders, not working credentials.
+
+`AUTOARCH_API_SECRET` is optional for local development. Set it to a random
+value of at least 32 characters to keep issued API tokens valid across backend
+restarts. `TESSERACT_CMD` is optional and is only needed when scanned PDFs need
+OCR and Tesseract is not available on `PATH`. Tesseract is an external program
+and is not installed by `pip`.
+
+### Local data and models
+
+SQLite databases, processed artifacts, and Chroma vector indexes are generated
+under `data/` and are intentionally not committed. Uploaded PDFs are staged
+temporarily in the operating system's temp directory; processed document
+artifacts are written under `data/processed/`. The
+`sentence-transformers/all-MiniLM-L6-v2` embedding model is downloaded
+automatically by Sentence Transformers the first time it is needed, so that
+first run requires internet access. No sample AUTOSAR PDF or prebuilt index is
+included; create a project and upload a PDF you are authorized to use.
 
 ---
 
@@ -296,11 +315,30 @@ Follow the prompts to configure the administrator account.
 
 Do not store administrator passwords inside the source code.
 
+To reset the password for an existing active admin account, run this command
+from the project root and follow the non-echoing prompts:
+
+```powershell
+.\venv\Scripts\python.exe -m database.access_control reset-admin-password
+```
+
+The command updates only the selected admin account and stores the password
+as a salted PBKDF2 hash.
+
 ---
 
 ## Run the Application
 
-From the project root:
+Run the FastAPI backend from the repository root:
+
+```powershell
+uvicorn backend.api:app --reload
+```
+
+The API documentation is available at `http://127.0.0.1:8000/docs`.
+
+In a second terminal, activate the same virtual environment and start the
+Streamlit frontend:
 
 ```bash
 streamlit run frontend/app.py
@@ -308,21 +346,9 @@ streamlit run frontend/app.py
 
 The Streamlit UI will open in your browser.
 
----
-
-## Optional: Run the FastAPI Backend
-
-The backend can be started with:
-
-```bash
-uvicorn backend.api:app --reload
-```
-
-API documentation is available at:
-
-```text
-http://127.0.0.1:8000/docs
-```
+Both commands should be run from the repository root. The Streamlit interface
+uses the application services directly; the FastAPI service is also available
+for API clients.
 
 ---
 

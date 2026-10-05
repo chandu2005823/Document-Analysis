@@ -1,110 +1,105 @@
-**# AutoArch-AI**
+# AutoArch-AI
 
-**## AI-Powered AUTOSAR HLD Document Analysis & Architecture Traceability Assistant**
+AI-Powered AUTOSAR HLD Document Analysis & Architecture Traceability Assistant
 
 AutoArch-AI is an AI-assisted platform for analyzing AUTOSAR High-Level Design (HLD) documents and turning large architecture documents into searchable, traceable, and reviewable engineering knowledge.
 
 The system combines document ingestion, architecture/entity extraction, source-grounded RAG, traceability, architecture relationship exploration, document comparison, review workflows, audit logging, and role-based project isolation in one application.
 
-\---
+Key Features
 
-**## Key Features**
+1. Document Ingestion
 
-**### 1. Document Ingestion**
+- Upload AUTOSAR HLD PDF documents
 
-\- Upload AUTOSAR HLD PDF documents
+- Extract page-level text using PyMuPDF
 
-\- Extract page-level text using PyMuPDF
+- OCR fallback for image-based pages
 
-\- OCR fallback for image-based pages
+- Detect and extract tables using pdfplumber
 
-\- Detect and extract tables using pdfplumber
+- Split documents into searchable chunks
 
-\- Split documents into searchable chunks
+- Preserve page-level provenance
 
-\- Preserve page-level provenance
+2. AI-Powered Q&A
 
-**### 2. AI-Powered Q&A**
+- Ask natural-language questions about uploaded documents
 
-\- Ask natural-language questions about uploaded documents
+- Retrieval-Augmented Generation (RAG)
 
-\- Retrieval-Augmented Generation (RAG)
+- Semantic retrieval using embeddings
 
-\- Semantic retrieval using embeddings
+- Source-grounded answers
 
-\- Source-grounded answers
+- Page/source citations
 
-\- Page/source citations
+- Confidence and grounding checks
 
-\- Confidence and grounding checks
+- Clear error handling when the language model is unavailable
 
-\- Clear error handling when the language model is unavailable
+3. Architecture Traceability
 
-**### 3. Architecture Traceability**
+- Search architecture entities such as components, ports, interfaces, and other extracted entities
 
-\- Search architecture entities such as components, ports, interfaces, and other extracted entities
+- View linked source pages
 
-\- View linked source pages
+- Inspect source evidence from the original document
 
-\- Inspect source evidence from the original document
+- Trace extracted entities back to their document evidence
 
-\- Trace extracted entities back to their document evidence
+4. Architecture Explorer
 
-**### 4. Architecture Explorer**
+- Explore extracted architecture relationships
 
-\- Explore extracted architecture relationships
+- Search/filter by entity and relationship
 
-\- Search/filter by entity and relationship
+- View relationships such as:
 
-\- View relationships such as:
+  - PPort → provides → Service Instance
 
-  - \`PPort → provides → Service Instance\`
+  - RPort → consumes → Service Instance
 
-  - \`RPort → consumes → Service Instance\`
+- Interactive architecture visualization
 
-\- Interactive architecture visualization
+- Relationship inspector with source page information
 
-\- Relationship inspector with source page information
+5. Document Comparison
 
-**### 5. Document Comparison**
+- Compare document versions
 
-\- Compare document versions
+- Identify changes in extracted architecture information
 
-\- Identify changes in extracted architecture information
+- Support architecture lifecycle and change analysis
 
-\- Support architecture lifecycle and change analysis
+6. Review & Approval
 
-**### 6. Review & Approval**
+- Review extracted/AI-generated information
 
-\- Review extracted/AI-generated information
+- Support human verification before relying on results
 
-\- Support human verification before relying on results
-
-**### 7. Project Isolation & RBAC**
+7. Project Isolation & RBAC
 
 The system supports three roles:
 
-\- **\*\*Admin\*\*** — manage users, projects, memberships, and workspace controls
+- Admin — manage users, projects, memberships, and workspace controls
 
-\- **\*\*Architect\*\*** — analyze documents and use architecture/review features
+- Architect — analyze documents and use architecture/review features
 
-\- **\*\*Viewer\*\*** — view available project information without modification privileges
+- Viewer — view available project information without modification privileges
 
 Project-level authorization is applied to application data and retrieval operations.
 
-**### 8. Audit Logging**
+8. Audit Logging
 
-\- Record important application actions
+- Record important application actions
 
-\- Support traceability of user and project activity
+- Support traceability of user and project activity
 
-\- Protect sensitive credential information through redaction
+- Protect sensitive credential information through redaction
 
-\---
+System Architecture
 
-**## System Architecture**
-
-\`\`\`text
 
                     ┌──────────────────────────┐
 
@@ -196,69 +191,63 @@ Project-level authorization is applied to application data and retrieval operati
 
                └──────────────────┘
 
-\`\`\`
 
-\---
+Technology Stack
 
-**## Technology Stack**
+Frontend
 
-**### Frontend**
+- Streamlit
 
-\- Streamlit
+Backend
 
-**### Backend**
+- FastAPI
 
-\- FastAPI
+- Python
 
-\- Python
+Document Processing
 
-**### Document Processing**
+- PyMuPDF
 
-\- PyMuPDF
+- pdfplumber
 
-\- pdfplumber
+- Tesseract OCR integration
 
-\- Tesseract OCR integration
+AI / RAG
 
-**### AI / RAG**
+- Sentence Transformers
 
-\- Sentence Transformers
+- ChromaDB
 
-\- ChromaDB
+- Retrieval-Augmented Generation
 
-\- Retrieval-Augmented Generation
+- Groq API / LLM
 
-\- Groq API / LLM
+- Grounding and citation validation
 
-\- Grounding and citation validation
+Data & Security
 
-**### Data & Security**
+- SQLite
 
-\- SQLite
+- PBKDF2 password hashing
 
-\- PBKDF2 password hashing
+- Role-Based Access Control (RBAC)
 
-\- Role-Based Access Control (RBAC)
+- Project-level isolation
 
-\- Project-level isolation
+- Audit logging
 
-\- Audit logging
+Visualization
 
-**### Visualization**
+- PyVis
 
-\- PyVis
+Testing
 
-**### Testing**
+- pytest
 
-\- pytest
+Project Structure
 
-\---
 
-**## Project Structure**
-
-\`\`\`text
-
-AutoArch-AI/
+Document-Analysis/
 
 │
 
@@ -296,7 +285,7 @@ AutoArch-AI/
 
 │       ├── relationships.py
 
-│       ├── review\.py
+│       ├── review.py
 
 │       └── traceability.py
 
@@ -396,29 +385,23 @@ AutoArch-AI/
 
 └── README.md
 
-\`\`\`
 
-\---
+Requirements
 
-**## Requirements**
+- Python 3.13 recommended
 
-\- Python 3.13 recommended
+- Git
 
-\- Git
+- Internet connection for installing Python packages
 
-\- Internet connection for installing Python packages
+- Tesseract OCR executable for OCR fallback workflows
 
-\- Tesseract OCR executable for OCR fallback workflows
-
-\- Optional Groq API key for AI-generated Q&A responses
-
-\---
+- Optional Groq API key for AI-generated Q&A responses
 
 **## ⚡ Quick Start (Windows)
 
 If you want the shortest path from download to running the application:
 
-```powershell
 git clone https://github.com/chandu2005823/Document-Analysis.git
 cd Document-Analysis
 
@@ -428,153 +411,85 @@ py -3.13 -m venv venv
 pip install -r requirements.txt
 
 copy .env.example .env
-```
 
-Open `.env` and set:
+Open .env and set:
 
-```text
 GROQ_API_KEY=your_groq_api_key_here
-```
+
 
 Then start the backend:
 
-```powershell
 uvicorn backend.api:app --reload
-```
 
-Open a **second terminal**, activate the environment again, and start Streamlit:
+Open a second terminal, activate the environment again, and start Streamlit:
 
-```powershell
 cd Document-Analysis
 .\venv\Scripts\Activate.ps1
 streamlit run frontend/app.py
-```
 
 Open the Streamlit URL shown in the terminal, usually:
 
-```text
 http://localhost:8501
-```
 
-For the first test, download the **Recommended Test Document** listed below and upload it to the application.
 
----
+For the first test, download the Recommended Test Document listed below and upload it to the application.
 
-## Installation**
+Installation
 
-**### 1. Clone the repository**
+1. Clone the repository
 
-\`\`\`bash
-
-git clone https\://github.com/chandu2005823/-Document-Analysis-Assistant-.git AutoArch-AI
-
+git clone https://github.com/chandu2005823/Document-Analysis.git
 cd Document-Analysis
 
-\`\`\`
+2. Create and activate a virtual environment
 
-**### 2. Create a virtual environment**
+Windows PowerShell:
 
-From the repository root, on Windows:
+py -3.13 -m venv venv
+.\venv\Scripts\Activate.ps1
 
-\`\`\`powershell
-
-python -m venv venv
-
-.\venv\Scripts\activate
-
-\`\`\`
-
-Linux/macOS:
-
-\`\`\`bash
+Linux / macOS:
 
 python3 -m venv venv
-
 source venv/bin/activate
 
-\`\`\`
-
-**### 3. Install dependencies**
-
-\`\`\`bash
+3. Install dependencies
 
 pip install -r requirements.txt
 
-\`\`\`
+4. Configure environment variables
 
-**### 4. Configure environment variables**
-
-Create a local \`.env\` file from the committed template:
-
-\`\`\`powershell
+Create your local .env file:
 
 copy .env.example .env
 
-\`\`\`
+Open .env and add your Groq API key:
 
-Set \`GROQ_API_KEY\` in \`.env\` to enable AI-generated Q&A responses. The app
+GROQ_API_KEY=your_groq_api_key_here
 
-loads \`.env\` from the repository root; values in \`.env.example\` are
+The Groq key is required for AI-generated Q&A responses. The values in .env.example are placeholders and must not be committed as real credentials.
 
-placeholders, not working credentials.
+Optional settings:
 
-\`AUTOARCH_API_SECRET\` is optional for local development. Set it to a random
+AUTOARCH_API_SECRET — keeps issued API tokens valid across backend restarts.
 
-value of at least 32 characters to keep issued API tokens valid across backend
+TESSERACT_CMD — use only when Tesseract is installed but is not available on PATH.
 
-restarts. \`TESSERACT_CMD\` is optional and is only needed when scanned PDFs need
+Note: Tesseract is an external application and is not installed by pip.
 
-OCR and Tesseract is not available on \`PATH\`. Tesseract is an external program
+5. Local data and models
 
-and is not installed by \`pip\`.
+The application creates SQLite databases, processed documents, and Chroma vector indexes under data/. These files are intentionally excluded from Git.
 
-**### Local data and models**
+The sentence-transformers/all-MiniLM-L6-v2 embedding model is downloaded automatically the first time it is needed, so the first run requires internet access.
 
-SQLite databases, processed artifacts, and Chroma vector indexes are generated
-
-under \`data/\` and are intentionally not committed. Uploaded PDFs are staged
-
-temporarily in the operating system's temp directory; processed document
-
-artifacts are written under \`data/processed/\`. The
-
-\`sentence-transformers/all-MiniLM-L6-v2\` embedding model is downloaded
-
-automatically by Sentence Transformers the first time it is needed, so that
-
-first run requires internet access. No pre-built vector index is included in the repository. For a clear first test,
-use the official AUTOSAR Adaptive Platform architecture document below.
-
-### Recommended Test Document
-
-**AUTOSAR Explanation of Adaptive Platform Software Architecture (R25-11)**
-
-Official PDF:
-https://www.autosar.org/fileadmin/standards/R25-11/AP/AUTOSAR_AP_EXP_SWArchitecture.pdf
-
-This is the recommended document for testing the Architecture Explorer,
-traceability, relationships, and RAG features. It is an AUTOSAR architecture
-document and matches the domain-specific extraction supported by this project.
-
-> **Important:** The Architecture Explorer is optimized for AUTOSAR HLD and
-> AUTOSAR architecture documents. General architecture/design PDFs may upload
-> successfully but may not produce AUTOSAR-specific entities or relationships.
-
-Download the PDF from the official AUTOSAR website and upload it through the
-application. Do not commit your downloaded PDF, processed data, vector indexes,
-or API keys to this repository.
-
-\---
-
-**## Initialize the Admin Account**
+Initialize the Admin Account
 
 Use the application's existing database bootstrap flow:
 
-\`\`\`bash
 
 python -m database.access_control setup-admin
 
-\`\`\`
 
 Follow the prompts to configure the administrator account.
 
@@ -584,39 +499,31 @@ To reset the password for an existing active admin account, run this command
 
 from the project root and follow the non-echoing prompts:
 
-\`\`\`powershell
 
 .\venv\Scripts\python.exe -m database.access_control reset-admin-password
 
-\`\`\`
 
 The command updates only the selected admin account and stores the password
 
 as a salted PBKDF2 hash.
 
-\---
-
-**## Run the Application**
+Run the Application
 
 Run the FastAPI backend from the repository root:
 
-\`\`\`powershell
 
 uvicorn backend.api\:app --reload
 
-\`\`\`
 
-The API documentation is available at \`http\://127.0.0.1:8000/docs\`.
+The API documentation is available at http://127.0.0.1:8000/docs.
 
 In a second terminal, activate the same virtual environment and start the
 
 Streamlit frontend:
 
-\`\`\`bash
 
 streamlit run frontend/app.py
 
-\`\`\`
 
 The Streamlit UI will open in your browser.
 
@@ -626,28 +533,28 @@ uses the application services directly; the FastAPI service is also available
 
 for API clients.
 
-\---
-
 **## 📌 Supported Document Scope
 
-This project is a **domain-specific AUTOSAR HLD / architecture analysis assistant**.
+This project is a domain-specific AUTOSAR HLD / architecture analysis assistant.
 
 Use an AUTOSAR HLD or AUTOSAR architecture document when testing:
 
-- Architecture entity extraction
-- Component / interface / port / service relationships
-- Architecture Explorer
-- Traceability
-- RAG-based Q&A
-- Document comparison
+Architecture entity extraction
+
+Component / interface / port / service relationships
+
+Architecture Explorer
+
+Traceability
+
+RAG-based Q&A
+
+Document comparison
 
 A general architecture-history or design document is not guaranteed to produce AUTOSAR relationships.
 
----
+Typical Usage Workflow**
 
-## Typical Usage Workflow**
-
-\`\`\`text
 
 Login
 
@@ -683,15 +590,11 @@ Q&A / Traceability / Architecture
 
 Review / Compare / Export / Audit
 
-\`\`\`
 
-\---
-
-**## Example Architecture Analysis**
+Example Architecture Analysis
 
 For a supported AUTOSAR architecture document, the Architecture Explorer can surface relationships such as:
 
-\`\`\`text
 
 PPort
 
@@ -705,71 +608,63 @@ RPort
 
   └── consumes ──► Service Instance
 
-\`\`\`
 
 The Traceability workspace links extracted entities back to source pages and evidence from the original document.
 
-\---
-
-**## Testing**
+Testing
 
 Run the full test suite with:
 
-\`\`\`bash
 
 python -m pytest -q
 
-\`\`\`
 
 The test suite covers areas including:
 
-\- authentication and access control
+- authentication and access control
 
-\- project isolation
+- project isolation
 
-\- document processing
+- document processing
 
-\- PDF parsing
+- PDF parsing
 
-\- table extraction
+- table extraction
 
-\- architecture extraction
+- architecture extraction
 
-\- traceability
+- traceability
 
-\- relationships
+- relationships
 
-\- retrieval and RAG
+- retrieval and RAG
 
-\- document comparison
+- document comparison
 
-\- graph functionality
+- graph functionality
 
-\---
-
-**## Security Notes**
+Security Notes
 
 The repository intentionally excludes local runtime data such as:
 
-\- virtual environments
+- virtual environments
 
-\- \`.env\` files
+- .env files
 
-\- SQLite databases
+- SQLite databases
 
-\- local Chroma/vector-store data
+- local Chroma/vector-store data
 
-\- processed document data
+- processed document data
 
-\- uploaded PDFs
+- uploaded PDFs
 
-\- logs and temporary files
+- logs and temporary files
 
 These files are intended to remain local to the development environment.
 
 Never commit:
 
-\`\`\`text
 
 GROQ_API_KEY
 
@@ -779,33 +674,28 @@ tokens
 
 database credentials
 
-\`\`\`
 
-\---
-
-**## Project Objective**
+Project Objective
 
 AutoArch-AI aims to reduce the effort required to understand and maintain large AUTOSAR HLD documents by making architecture information:
 
-\- searchable
+- searchable
 
-\- traceable
+- traceable
 
-\- source-grounded
+- source-grounded
 
-\- easier to compare
+- easier to compare
 
-\- easier to review
+- easier to review
 
-\- isolated by project and role
+- isolated by project and role
 
 The system is designed to assist engineers rather than replace human architectural review.
 
-\---
+Author
 
-**## Author**
-
-**\*\*Chandra Lekha\*\***
+Chandra Lekha
 
 Computer Science Engineering  
 
@@ -813,12 +703,10 @@ Dayananda Sagar University
 
 GitHub:  
 
-https\://github.com/chandu2005823
+https://github.com/chandu2005823
 
-\---
+Repository
 
-**## Repository**
+https://github.com/chandu2005823/Document-Analysis
 
-https\://github.com/chandu2005823/AUTOSAR-Document-Analyzer
-
-**\*\*Last Updated:\*\*** October 4, 2026 - All functionalities verified and working
+Last Updated: October 4, 2026 - All functionalities verified and working
